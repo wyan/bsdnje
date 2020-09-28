@@ -73,7 +73,7 @@ detach()
 	}
 #else	/* !_POSIX_SOURCE */
 #ifdef	USE_BSDSETPGRP
-#if	defined(__svr4__)
+#if	defined(__svr4__) || defined(__APPLE__)
 	setpgrp();
 #else	/* not __svr4__ */
 	(void) setpgrp(0, getpid());	/* change process group */
