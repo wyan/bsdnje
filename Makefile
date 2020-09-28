@@ -72,17 +72,6 @@
 #	-DUSE_OWN_PROTOS  If the "prototypes.h" -prototypes for various things
 #			can fit your system, and your system does not have
 
-# Linux drb version
-CDEFS=-DUSG -DNBCONNECT -DNBSTREAM -DUSE_XMIT_QUEUE \
-	-DUSE_SOCKOPT -DSOCKBUFSIZE=8192 -DUSE_ENUM_TYPES -DDEBUG \
-	-DCONFIG_FILE='"/etc/funetnje/funetnje.cf"' \
-	-DPID_FILE='"/var/run/funetnje.pid"'
-CC=gcc
-CPP=gcc -E
-CFLAGS= -g -O2 -Wpacked -Wpadded $(CDEFS)
-RANLIB=ranlib
-INSTALL=install
-
 
 # Name of the group on which all communication using programs are
 # SGIDed to..  Also the system manager must have that bit available
@@ -92,10 +81,22 @@ NJEGRP=funetnje
 SEND=tell
 PRINT=njeprint
 # Assign directories
-MANDIR= /usr/local/man
-LIBDIR= /usr/local/funetnje
-BINDIR= /usr/local/bin
-ETCDIR= /usr/local/etc
+PREFIX=/Users/alice/local
+MANDIR=$(PREFIX)/man
+LIBDIR=$(PREFIX)/funetnje
+BINDIR=$(PREFIX)/bin
+ETCDIR=$(PREFIX)/etc
+
+# Linux drb version
+CDEFS=-DUSG -DNBCONNECT -DNBSTREAM -DUSE_XMIT_QUEUE \
+	-DUSE_SOCKOPT -DSOCKBUFSIZE=8192 -DUSE_ENUM_TYPES -DDEBUG \
+	-DCONFIG_FILE='"$(ETCDIR)/funetnje.cf"' \
+	-DPID_FILE='"/var/run/funetnje.pid"'
+CC=gcc
+CPP=gcc -E
+CFLAGS= -g -O2 -Wpacked -Wpadded $(CDEFS)
+RANLIB=ranlib
+INSTALL=install
 
 # If you have a malloc library with GOOD debugging facilities..
 #DEBUG_LIBMALLOC=-L.. -lmalloc_dgcc
@@ -149,6 +150,7 @@ OBJnamesfilter=	namesfilter.o namesparser.o
 # Phase these out, once the `receive' works
 #OBJbitcat=	bitcat.o	clientlib.a
 #OBJnetdata=	ndparse.o	clientlib.a
+MAILIFY=mailify
 PROGRAMS=	funetnje receive bmail ${SEND} sendfile njeroutes bitsend \
 		qrdr ygone transfer acctcat ucp $(MAILIFY) namesfilter
 ObsoletePROGRAMS= bitcat ndparse
@@ -257,7 +259,7 @@ makeuuetar: maketar
 
 install:
 	echo "To install actual control/config files do 'make install1' or 'make install2'"
-	@echo "Must propably be root for this also."
+	@echo "Must probably be root for this also."
 	-mkdir ${LIBDIR}
 	$(INSTALL) -s -m 755 funetnje ${LIBDIR}/funetnje.x
 	mv ${LIBDIR}/funetnje.x ${LIBDIR}/funetnje
@@ -296,7 +298,7 @@ install1:	route
 	@echo "MUST BE ROOT TO DO THIS!"
 	@echo "(this is for NIC.FUNET.FI)"
 	-mkdir ${LIBDIR}
-	cp finfiles.cf /etc/funetnje.cf
+	cp finfiles.cf $(ETCDIR)/funetnje.cf
 	cp nje.route* ${LIBDIR}
 	cp file-exit.cf ${LIBDIR}/file-exit.cf
 	cp msg-exit.cf ${LIBDIR}/msg-exit.cf
